@@ -1,0 +1,53 @@
+train:
+  model: models.BertClassifierClsTokens
+  model_params:
+    pretrained_model_name: bert-base-uncased
+    num_classes: 30
+    num_hidden: 4
+
+  dir_to_save_model: 'weights'
+  dir_to_load_model: 'weights/'
+  own_pretrain: False
+  task: classification
+  experiment_name: ''
+
+  batch_size: 8
+  lr: 3.0e-05
+  patience: 6
+  num_epochs: 3
+  loss: losses.nn.BCEWithLogitsLoss
+  loss_params: {}
+  n_freeze: 0
+  accumulation_steps: 1
+  fp16: O1
+
+
+  scheduler: catalyst.contrib.schedulers.OneCycleLRWithWarmup # ReduceLROnPlateau # MultiStepLR
+  scheduler_params:
+#    factor: 0.3
+#    patience: 0
+#    milestones: [3]
+#    gamma: 0.3
+    num_steps: 4
+    lr_range: [7.5e-5, 1.5e-5, 1.0e-5]
+    init_lr: 3.0e-5
+    warmup_steps: 1
+    decay_steps: 1
+data:
+  preprocessing_params:
+    max_sequence_length: 512
+    t_max_len: 29
+    q_max_len: 239
+    a_max_len: 239
+    head_tail: True
+    do_preproc: False
+    two_inputs: False
+
+  bert_inputs:
+    - features
+    - attention_mask
+    - token_type_ids
+
+  path_to_train_csv: '/home/google-quest/data/train_5_folds.csv'
+  path_to_valid_csv: '/home/google-quest/data/valid_5_folds.csv'
+  path_to_test_csv:  '/home/google-quest/data/test.csv'
